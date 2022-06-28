@@ -34,15 +34,15 @@ function setMag(vetor,mag){   // Normaliza o vetor e o multiplica pela magnitude
 }
 
 function dist(ponto1,ponto2){ // Calcula a distância entre dois pontos
-    var a = ponto1[0] - ponto2[0];
-    var b = ponto1[1] - ponto2[1];
+    let a = ponto1[0] - ponto2[0];
+    let b = ponto1[1] - ponto2[1];
     return Math.sqrt( a*a + b*b );
 }
 
 function ajustaBarra(listaPontos,listaMoveis){ // Faz o ajuste das barras
     // listaPontos é a lista de todos os pontos da barra
     // listaBarras é a lista correspondente que indica quais dos pontos são móveis
-    for (var i = 0;i<listaPontos.length-1;i++){
+    for (let i = 0;i<listaPontos.length-1;i++){
         // Para cada ponto (e o ponto seguinte na lista)...
         let dir = subV(listaPontos[i+1], listaPontos[i])        // Calcule a direção (o vetor entre os dois pontos);
         let distancia = dist(listaPontos[i], listaPontos[i+1])  // Calcule a distancia entre eles;
