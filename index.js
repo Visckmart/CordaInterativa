@@ -154,19 +154,19 @@ então depois de apertar o mouse uma única vez o ponto seguirá ele para sempre
 Além disso o código só roda enquanto o mouse está em movimento, portanto se o primeiro ponto da lista
 estiver setado como "móvel" fica bem tosco, recomendo deixar imóvel enquanto essa parte do código estiver aqui
   */
-document.addEventListener("mousedown");
-onmousedown = function () {
+document.addEventListener("mousedown", () => {
   mouseDown = true;
-};
-onmouseup = function () {
+});
+document.addEventListener("mouseup", () => {
   mouseDown = false;
-};
-if (mouseDown) {
-  onmousemove = function (e) {
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (mouseDown) {
     currentControlPoints[0][0] = e.clientX / scaleX;
     currentControlPoints[0][1] = e.clientY / scaleY;
-  };
-}
+  }
+})
 
 function updateFrame(time) {
   requestAnimationFrame(updateFrame);
