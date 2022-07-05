@@ -10,7 +10,11 @@ canvasElement.style.backgroundColor = "#EEE";
 
 let barLen = 1; // Comprimento das barras entre os nós
 let tol = 1e-5; // Tolerancia aceita para o comprimento
+let tolRel = 120; // Tolerancia relaxamento
 
+let ventAngulo = 0
+let ventForca = 0
+let vento = [0,0]
 
 const altura = 10;
 const razao = width / height;
@@ -21,6 +25,7 @@ const scaleY = height / altura;
 let moveis = [false, true, true, true]; // moveis[i] corresponde ao ponto de indice i e determina se ele é móvel ou imóvel
 let currentControlPoints = [[5, 1], [5.5, 1], [7, 1], [8, 1]];
 let circulosColisao = [[[5,4],1],[[8,8],0.5]]
+let ground = 9
 
 ajustaBarra(currentControlPoints, moveis);
 // moveis = [true, true]
@@ -52,7 +57,7 @@ function ajustaBarra(listaPontos, listaMoveis) {
     let n = 0;
     while (relaxaBarra(listaPontos, listaMoveis)) {
         n += 1;
-        if (n > 50) {
+        if (n > tolRel) {
             return n;
         }
     }
@@ -67,6 +72,11 @@ function colisao(posicao) {
             let magnitude = Math.abs(distancia - circulosColisao[i][1]);
             dir = setMag(dir,magnitude)
             posicao = subV(posicao,dir)
+        }
+    }
+    if(ground<=10){
+        if(posicao[1]>ground){
+            posicao[1] = ground
         }
     }
     return posicao
@@ -165,6 +175,12 @@ function drawCorda(controlPoints, deltaT) {
         ctx.arc(circulo[0][0]*scaleX, circulo[0][1]*scaleY, circulo[1]*scaleX, 0, Math.PI*2)
         ctx.fill()
     }
+    ctx.beginPath()
+    ctx.lineTo(0,ground*scaleY)
+    ctx.lineTo(width,ground*scaleY)
+
+    ctx.lineWidth = 3;
+    ctx.stroke();
 }
 
 let cordaAnterior = null;
@@ -174,14 +190,11 @@ currentControlPoints = currentControlPoints.map((ponto) =>
 );
 let lastTime = null;
 
-/*
-Supostamente as proximas linhas deveriam fazer com que enquanto o mouse estiver sendo apertado,
-o primeiro ponto se moveria para o mouse. Mas por algum motivo o onmouseup não parece funcionar
-então depois de apertar o mouse uma única vez o ponto seguirá ele para sempre.
+function calculaVento(){
+    let angle = ventAngulo*(Math.PI/180)
+    return [ventForca*Math.cos(angle),ventForca*Math.sin(angle)]
+}
 
-Além disso o código só roda enquanto o mouse está em movimento, portanto se o primeiro ponto da lista
-estiver setado como "móvel" fica bem tosco, recomendo deixar imóvel enquanto essa parte do código estiver aqui
-  */
 function getNearControlPoint(controlPoints, point) {
     let nearestControlPoint;
     let nearestDist;
@@ -238,10 +251,12 @@ function updateFrame(time) {
     const deltaT = time - lastTime;
     ctx.clearRect(0, 0, width, height);
 
+    vento = calculaVento()
+
     const tempCorda = [...currentControlPoints];
     currentControlPoints = currentControlPoints.map((ponto, index) => {
         if (moveis[index]) {
-            return verlet(ponto, cordaAnterior[index], (deltaT) / 1000);
+            return verlet(ponto, cordaAnterior[index], (deltaT) / 1000, vento);
         } else {
             return ponto;
         }
@@ -262,9 +277,34 @@ const tamanhoElemento = document.getElementById("tamanho")
 const tamanhoValorElemento = document.getElementById("tamanho_valor")
 const nPontosElemento = document.getElementById("nPontos")
 const nPontosValorElemento = document.getElementById("nPontos_valor")
+const ventoAnguloElemento = document.getElementById("vento_angulo")
+const ventoAnguloValorElemento = document.getElementById("vento_angulo_valor")
+const ventoForcaElemento = document.getElementById("vento_forca")
+const ventoForcaValorElemento = document.getElementById("vento_forca_valor")
+const groundElemento = document.getElementById("ground")
+const groundValorElemento = document.getElementById("ground_valor")
+
+groundElemento.addEventListener("change", () => {
+    ground = 11-Number.parseFloat(groundElemento.value)
+    if(ground>10){
+        groundValorElemento.textContent = "Altura do chão: Sem chão"
+    }else{
+        groundValorElemento.textContent = "Altura do chão:" + ground.toString()
+    }
+})
+ventoAnguloElemento.addEventListener("change", () => {
+    ventAngulo = Number.parseFloat(ventoAnguloElemento.value)
+    ventoAnguloValorElemento.textContent = "Ângulo do vento:" +ventAngulo.toString()
+})
+
+ventoForcaElemento.addEventListener("change", () => {
+    ventForca = Number.parseFloat(ventoForcaElemento.value)
+    ventoForcaValorElemento.textContent = "Força do vento:" +ventForca.toString()
+})
+
 tamanhoElemento.addEventListener("change", () => {
     barLen = Number.parseFloat(tamanhoElemento.value)
-    tamanhoValorElemento.textContent = barLen.toString()
+    tamanhoValorElemento.textContent = "Comprimento: " + barLen.toString()
 })
 
 nPontosElemento.addEventListener("change", () => {
@@ -272,7 +312,7 @@ nPontosElemento.addEventListener("change", () => {
     
     const delta = nPontos - currentControlPoints.length
     let lastPoint =  currentControlPoints[currentControlPoints.length-1]
-    console.log(lastPoint)
+    //console.log(lastPoint)
     let secondToLastPoint = currentControlPoints[currentControlPoints.length - 2]
     let dir = subV(lastPoint, secondToLastPoint);
     dir = setMag(dir, barLen);
@@ -288,5 +328,5 @@ nPontosElemento.addEventListener("change", () => {
             moveis.pop()
         }
     }
-    nPontosValorElemento.textContent = nPontos.toString()
+    nPontosValorElemento.textContent = "Quantidade: "+ nPontos.toString()
 })

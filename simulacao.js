@@ -1,5 +1,5 @@
-function forca(tempo) {
-    return [0, massa * 9.8]
+function forca(tempo,vento) {
+    return [0+vento[0], massa * 9.8+vento[1]]
 }
 
  
@@ -11,8 +11,8 @@ export function estimativaInicial([x0, y0], [vx0, vy0]) {
 
 const massa = 0.1
 const fatorRelaxamento = 0.02
-export function verlet([x, y], [xAnterior, yAnterior], tempo) {
-    const [fx, fy] = forca(tempo)
+export function verlet([x, y], [xAnterior, yAnterior], tempo, vento) {
+    const [fx, fy] = forca(tempo,vento)
 
     let xProx = x + (1 - fatorRelaxamento) * (x - xAnterior) + ((tempo ** 2) / massa) * fx
     let yProx = y + (1 - fatorRelaxamento) * (y - yAnterior) + ((tempo ** 2) / massa) * fy
