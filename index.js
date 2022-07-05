@@ -246,12 +246,16 @@ nPontosElemento.addEventListener("change", () => {
     const nPontos = Number.parseInt(nPontosElemento.value)
     
     const delta = nPontos - currentControlPoints.length
-    console.log(delta)
-    
+    let lastPoint =  currentControlPoints[currentControlPoints.length-1]
+    console.log(lastPoint)
+    let secondToLastPoint = currentControlPoints[currentControlPoints.length - 2]
+    let dir = subV(lastPoint, secondToLastPoint);
+    dir = setMag(dir, barLen);
+    let newPos = addV(lastPoint, dir);
     for(let i=0;i<Math.abs(delta);i++) {
         if(delta > 0) {
-            currentControlPoints.push([10, 10])
-            cordaAnterior.push([10,10])
+            currentControlPoints.push(newPos)
+            cordaAnterior.push(newPos)
             moveis.push(true)
         } else if(delta < 0) {
             currentControlPoints.pop()
