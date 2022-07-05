@@ -1,4 +1,4 @@
-import { estimativaInicial, verlet } from "./simulacao.js";
+import { estimativaInicial, verlet } from "./simulacao.js"
 
 let canvasElement = document.getElementById("canvas");
 let ctx = canvasElement.getContext("2d");
@@ -18,7 +18,9 @@ const razao = width / height;
 const largura = 10 * razao;
 const scaleX = width / largura;
 const scaleY = height / altura;
+
 let currentControlPoints = [[5, 5], [5.5, 5], [7, 5], [8, 5]];
+
 ajustaBarra(currentControlPoints, moveis);
 // moveis = [true, true]
 // currentControlPoints = [[110, 110],[250,320]]
@@ -154,17 +156,21 @@ então depois de apertar o mouse uma única vez o ponto seguirá ele para sempre
 Além disso o código só roda enquanto o mouse está em movimento, portanto se o primeiro ponto da lista
 estiver setado como "móvel" fica bem tosco, recomendo deixar imóvel enquanto essa parte do código estiver aqui
   */
-document.addEventListener("mousedown", () => {
+canvasElement.addEventListener("mousedown", () => {
     mouseDown = true;
 });
 document.addEventListener("mouseup", () => {
     mouseDown = false;
 });
 
-document.addEventListener("mousemove", (e) => {
+canvasElement.addEventListener("mousemove", (e) => {
     if (mouseDown) {
-        currentControlPoints[0][0] = e.clientX / scaleX;
-        currentControlPoints[0][1] = e.clientY / scaleY;
+        currentControlPoints[0][0] = (e.clientX - canvasElement.getBoundingClientRect().left) / scaleX;
+        currentControlPoints[0][1] = (e.clientY - canvasElement.getBoundingClientRect().top) / scaleY;
+
+        // currentControlPoints[currentControlPoints.length - 1][0] = (e.clientX - canvasElement.getBoundingClientRect().left) / scaleX;
+        // currentControlPoints[currentControlPoints.length - 1][1] = (e.clientY - canvasElement.getBoundingClientRect().top) / scaleY;
+        // moveis[moveis.length - 1] = false
     }
 })
 
@@ -195,3 +201,33 @@ function updateFrame(time) {
 }
 
 requestAnimationFrame(updateFrame);
+
+
+const tamanhoElemento = document.getElementById("tamanho")
+const tamanhoValorElemento = document.getElementById("tamanho_valor")
+const nPontosElemento = document.getElementById("nPontos")
+const nPontosValorElemento = document.getElementById("nPontos_valor")
+tamanhoElemento.addEventListener("change", () => {
+    barLen = Number.parseFloat(tamanhoElemento.value)
+    tamanhoValorElemento.textContent = barLen.toString()
+})
+
+nPontosElemento.addEventListener("change", () => {
+    const nPontos = Number.parseInt(nPontosElemento.value)
+    
+    const delta = nPontos - currentControlPoints.length
+    console.log(delta)
+    
+    for(let i=0;i<Math.abs(delta);i++) {
+        if(delta > 0) {
+            currentControlPoints.push([10, 10])
+            cordaAnterior.push([10,10])
+            moveis.push(true)
+        } else if(delta < 0) {
+            currentControlPoints.pop()
+            cordaAnterior.pop()
+            moveis.pop()
+        }
+    }
+    nPontosValorElemento.textContent = nPontos.toString()
+})
