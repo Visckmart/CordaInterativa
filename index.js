@@ -11,7 +11,6 @@ canvasElement.style.backgroundColor = "#EEE";
 let barLen = 1; // Comprimento das barras entre os nós
 let tol = 1e-5; // Tolerancia aceita para o comprimento
 
-let moveis = [false, true, true, true]; // moveis[i] corresponde ao ponto de indice i e determina se ele é móvel ou imóvel
 
 const altura = 10;
 const razao = width / height;
@@ -19,7 +18,9 @@ const largura = 10 * razao;
 const scaleX = width / largura;
 const scaleY = height / altura;
 
-let currentControlPoints = [[5, 5], [5.5, 5], [7, 5], [8, 5]];
+let moveis = [false, true, true, true]; // moveis[i] corresponde ao ponto de indice i e determina se ele é móvel ou imóvel
+let currentControlPoints = [[5, 1], [5.5, 1], [7, 1], [8, 1]];
+let circulosColisao = [[[5,4],1],[[8,8],0.5]]
 
 ajustaBarra(currentControlPoints, moveis);
 // moveis = [true, true]
@@ -57,6 +58,21 @@ function ajustaBarra(listaPontos, listaMoveis) {
     }
     return n;
 }
+
+function colisao(posicao) {
+    for(let i = 0; i < circulosColisao.length; i++){
+        let dir = subV(circulosColisao[i][0],posicao);
+        let distancia = dist(posicao, circulosColisao[i][0]); // Calcule a distancia entre eles;
+        if(distancia<circulosColisao[i][1]){
+            let magnitude = Math.abs(distancia - circulosColisao[i][1]);
+            dir = setMag(dir,magnitude)
+            posicao = subV(posicao,dir)
+        }
+    }
+    return posicao
+
+}
+
 function relaxaBarra(listaPontos, listaMoveis) { // Faz o ajuste das barras
                                                  // listaPontos é a lista de todos os pontos da barra
                                                  // listaBarras é a lista correspondente que indica quais dos pontos são móveis
@@ -81,6 +97,8 @@ function relaxaBarra(listaPontos, listaMoveis) { // Faz o ajuste das barras
         }
         let newPos = addV(listaPontos[i], dir); // Move o ponto atual em direção ao próximo ponto
         let newPos2 = subV(listaPontos[i + 1], dir); // Move o próximo ponto em direção ao ponto atual
+        newPos = colisao(newPos)
+        newPos2 = colisao(newPos2)
         if (listaMoveis[i]) { // (Apenas se estes forem móveis)
             listaPontos[i] = newPos;
         }
@@ -139,6 +157,13 @@ function drawCorda(controlPoints, deltaT) {
         }
         ctx.fill();
         i += 1;
+    }
+
+    for (let circulo of circulosColisao){
+        ctx.beginPath()
+        ctx.fillStyle = "black";
+        ctx.arc(circulo[0][0]*scaleX, circulo[0][1]*scaleY, circulo[1]*scaleX, 0, Math.PI*2)
+        ctx.fill()
     }
 }
 
