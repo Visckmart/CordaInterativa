@@ -1,0 +1,44 @@
+body {
+    font-family: sans-serif;
+}
+#menu {
+    /*padding: 10px;*/
+    width: 175pt;
+    margin-left: 10pt;
+    /*padding: 10pt;*/
+    /*background: red;*/
+}
+#menu output {
+    font-weight: bold;
+    /*font-size: 12pt;*/
+    /*padding-bottom: 10pt;*/
+}
+#menu > div, #menu > button {
+    background: #eee;
+    border-radius: 5pt;
+    border: 1.5pt solid #555;
+}
+#menu > div {
+    padding: 8pt 8pt 4pt 8pt;
+    margin-bottom: 15pt;
+}
+#menu input {
+    margin-top: 5pt;
+    width: 155pt;
+    /*box-sizing: border-box;*/
+}
+#menu > button {
+    background: #ccc;
+    width: 100%;
+    margin: 0;
+    padding: 4pt 8pt;
+    font-size: 11pt;
+}
+
+#menu > button:active {
+    background: #aaa;
+}
+canvas {
+    border-radius: 5pt;
+    border: 1.5pt solid #555;
+}

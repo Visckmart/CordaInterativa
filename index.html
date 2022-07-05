@@ -4,38 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <script src="index.js" type="module"></script>
+    <link rel="stylesheet" href="style.css">
     <title>Corda</title>
 </head>
 
 <body>
-    <div style="display: flex;">
-        <div style="display: flex;flex-direction:column">
-            <label id="tamanho_valor">
-            </label>
-            <input type="range" style="flex: 0 1 auto" id="tamanho" min="0.01", max="5" step="0.01" value="1"/>
-        </div>
-        <div style="display: flex;flex-direction:column">
-            <label id="nPontos_valor">
-            </label>
-            <input type="range" style="flex: 0 1 auto" id="nPontos" min="2" max="1000" value="4"/>
-        </div>
-        <div style="display: flex;flex-direction:column">
-            <label id="vento_angulo_valor" >
-            </label>
-            <input type="range" style="flex: 0 1 auto" id="vento_angulo" min="0" max="360" value="0"/>
-        </div>
-        <div style="display: flex;flex-direction:column" >
-            <label id="vento_forca_valor" >
-            </label>
-            <input type="range" style="flex: 0 1 auto" id="vento_forca" min="0" max="5" value="0" />
-        </div>
-        <div style="display: flex;flex-direction:column" >
-            <label id="ground_valor" >
-            </label>
-            <input type="range" style="flex: 0 1 auto" id="ground" min="0" max="10" value="1" step = "0.1" />
+    <div style="display: flex">
+        <canvas id="canvas" width="800" height="500"></canvas>
+        <div id="menu">
+            <div style="display: flex;flex-direction:column">
+                <div>
+                    <label for="tamanho">Comprimento:</label>
+                    <output id="tamanho_valor"></output>
+                </div>
+                <input type="range" style="flex: 0 1 auto" id="tamanho" min="0.01" max="5" step="0.01" value="1"/>
+            </div>
+            <div style="display: flex;flex-direction:column">
+                <div>
+                    <label for="nPontos">Quantidade: </label>
+                    <output id="nPontos_valor"></output>
+                </div>
+                <input type="range" style="flex: 0 1 auto" id="nPontos" min="2" max="1000" value="4"/>
+            </div>
+            <div style="display: flex;flex-direction:column" >
+                <div>
+                    <label for="vento_forca">Força do vento: </label><output id="vento_forca_valor"></output>
+                    <input type="range" style="flex: 0 1 auto" id="vento_forca" min="0" max="50" value="0" />
+                </div>
+            </div>
+            <div style="display: flex;flex-direction:column">
+                <div>
+                    <label for="vento_angulo">Ângulo do vento: </label><output id="vento_angulo_valor"></output>
+                    <input type="range" style="flex: 0 1 auto" id="vento_angulo" min="0" max="360" value="0"/>
+                </div>
+            </div>
+            <div style="display: flex;flex-direction:column" >
+                <div>
+                    <label for="ground">Altura do chão: </label><output id="ground_valor"></output>
+                    <input type="range" style="flex: 0 1 auto" id="ground" min="0" max="10" value="1" step = "0.1" />
+                </div>
+            </div>
+            <button id="resetButton">Restaurar configurações</button>
         </div>
     </div>
-    <canvas id="canvas" width="800" height="500"></canvas>
 </body>
 
 </html>

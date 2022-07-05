@@ -8,13 +8,46 @@ let height = canvasElement.clientHeight;
 
 canvasElement.style.backgroundColor = "#EEE";
 
+const tamanhoElemento = document.getElementById("tamanho")
+const tamanhoValorElemento = document.getElementById("tamanho_valor")
+
+const nPontosElemento = document.getElementById("nPontos")
+const nPontosValorElemento = document.getElementById("nPontos_valor")
+
+const ventoAnguloElemento = document.getElementById("vento_angulo")
+const ventoAnguloValorElemento = document.getElementById("vento_angulo_valor")
+
+const ventoForcaElemento = document.getElementById("vento_forca")
+const ventoForcaValorElemento = document.getElementById("vento_forca_valor")
+
+const groundElemento = document.getElementById("ground")
+const groundValorElemento = document.getElementById("ground_valor")
+const resetButton = document.getElementById("resetButton")
+
 let barLen = 1; // Comprimento das barras entre os nós
 let tol = 1e-5; // Tolerancia aceita para o comprimento
 let tolRel = 120; // Tolerancia relaxamento
 
+let nPontos = 4;
+
 let ventAngulo = 0
 let ventForca = 0
 let vento = [0,0]
+
+let ground = 11;
+
+function resetParameters() {
+    ground = 11;
+    barLen = 1; // Comprimento das barras entre os nós
+    tol = 1e-5; // Tolerancia aceita para o comprimento
+    tolRel = 120; // Tolerancia relaxamento
+
+    ventAngulo = 0
+    ventForca = 0
+    vento = [0,0]
+    refreshControlTexts()
+}
+resetButton.onclick = resetParameters
 
 const altura = 10;
 const razao = width / height;
@@ -25,7 +58,7 @@ const scaleY = height / altura;
 let moveis = [false, true, true, true]; // moveis[i] corresponde ao ponto de indice i e determina se ele é móvel ou imóvel
 let currentControlPoints = [[5, 1], [5.5, 1], [7, 1], [8, 1]];
 let circulosColisao = [[[5,4],1],[[8,8],0.5]]
-let ground = 9
+// let ground = 9
 
 ajustaBarra(currentControlPoints, moveis);
 // moveis = [true, true]
@@ -175,6 +208,7 @@ function drawCorda(controlPoints, deltaT) {
         ctx.arc(circulo[0][0]*scaleX, circulo[0][1]*scaleY, circulo[1]*scaleX, 0, Math.PI*2)
         ctx.fill()
     }
+
     ctx.beginPath()
     ctx.lineTo(0,ground*scaleY)
     ctx.lineTo(width,ground*scaleY)
@@ -272,43 +306,49 @@ function updateFrame(time) {
 
 requestAnimationFrame(updateFrame);
 
+let controles = [tamanhoElemento, nPontosElemento, ventoAnguloElemento, ventoForcaElemento, groundElemento]
+let textosControles = {
+    tamanhoValorElemento,
+    nPontosValorElemento,
+    ventoAnguloValorElemento,
+    ventoForcaValorElemento,
+    groundValorElemento
+}
 
-const tamanhoElemento = document.getElementById("tamanho")
-const tamanhoValorElemento = document.getElementById("tamanho_valor")
-const nPontosElemento = document.getElementById("nPontos")
-const nPontosValorElemento = document.getElementById("nPontos_valor")
-const ventoAnguloElemento = document.getElementById("vento_angulo")
-const ventoAnguloValorElemento = document.getElementById("vento_angulo_valor")
-const ventoForcaElemento = document.getElementById("vento_forca")
-const ventoForcaValorElemento = document.getElementById("vento_forca_valor")
-const groundElemento = document.getElementById("ground")
-const groundValorElemento = document.getElementById("ground_valor")
-
-groundElemento.addEventListener("change", () => {
-    ground = 11-Number.parseFloat(groundElemento.value)
+function refreshControlTexts() {
+    tamanhoValorElemento.textContent = barLen
+    nPontosValorElemento.textContent = nPontos.toString()
+    ventoAnguloValorElemento.textContent = ventAngulo.toString()
+    ventoForcaValorElemento.textContent = ventForca.toString()
     if(ground>10){
-        groundValorElemento.textContent = "Altura do chão: Sem chão"
+        groundValorElemento.textContent = "Sem chão"
     }else{
-        groundValorElemento.textContent = "Altura do chão:" + ground.toString()
+        groundValorElemento.textContent = ground.toString()
     }
+}
+refreshControlTexts()
+groundElemento.addEventListener("input", () => {
+    ground = 11-Number.parseFloat(groundElemento.value)
+    refreshControlTexts()
 })
-ventoAnguloElemento.addEventListener("change", () => {
+
+ventoAnguloElemento.addEventListener("input", () => {
     ventAngulo = Number.parseFloat(ventoAnguloElemento.value)
-    ventoAnguloValorElemento.textContent = "Ângulo do vento:" +ventAngulo.toString()
+    refreshControlTexts()
 })
 
-ventoForcaElemento.addEventListener("change", () => {
-    ventForca = Number.parseFloat(ventoForcaElemento.value)
-    ventoForcaValorElemento.textContent = "Força do vento:" +ventForca.toString()
+ventoForcaElemento.addEventListener("input", () => {
+    ventForca = Number.parseFloat(ventoForcaElemento.value)/10
+    refreshControlTexts()
 })
 
-tamanhoElemento.addEventListener("change", () => {
+tamanhoElemento.addEventListener("input", () => {
     barLen = Number.parseFloat(tamanhoElemento.value)
-    tamanhoValorElemento.textContent = "Comprimento: " + barLen.toString()
+    refreshControlTexts()
 })
 
-nPontosElemento.addEventListener("change", () => {
-    const nPontos = Number.parseInt(nPontosElemento.value)
+nPontosElemento.addEventListener("input", () => {
+    nPontos = Number.parseInt(nPontosElemento.value)
     
     const delta = nPontos - currentControlPoints.length
     let lastPoint =  currentControlPoints[currentControlPoints.length-1]
@@ -328,5 +368,6 @@ nPontosElemento.addEventListener("change", () => {
             moveis.pop()
         }
     }
-    nPontosValorElemento.textContent = "Quantidade: "+ nPontos.toString()
+    refreshControlTexts()
 })
+refreshControlTexts()
