@@ -129,7 +129,8 @@ function drawCorda(controlPoints, deltaT) {
             0,
             2 * Math.PI,
         );
-        if (moveis[i]) { // Se o ponto for móvel, pinte-o de azul
+        // console.log(i, nearestControlPoint)
+        if (i != nearestControlPointIndex) { // Se o ponto for móvel, pinte-o de azul
             ctx.fillStyle = "blue";
         } else {
             ctx.fillStyle = "red";
@@ -154,19 +155,49 @@ então depois de apertar o mouse uma única vez o ponto seguirá ele para sempre
 Além disso o código só roda enquanto o mouse está em movimento, portanto se o primeiro ponto da lista
 estiver setado como "móvel" fica bem tosco, recomendo deixar imóvel enquanto essa parte do código estiver aqui
   */
-document.addEventListener("mousedown", () => {
+function getNearControlPoint(controlPoints, point) {
+    let nearestControlPoint;
+    let nearestDist;
+    let nearestIndex;
+    for (let index in controlPoints) {
+        let currentDist = dist(controlPoints[index], point)
+        if (nearestDist === undefined || nearestDist > currentDist) {
+            nearestControlPoint = controlPoints[index];
+            nearestIndex = index;
+            nearestDist = currentDist;
+        }
+    }
+    if (nearestDist < 50) {
+        // console.log(nearestDist, nearestIndex)
+        return parseInt(nearestIndex);
+    }
+}
+canvasElement.addEventListener("mousedown", () => {
     mouseDown = true;
+    canvasElement.style.cursor = "grabbing"
 });
-document.addEventListener("mouseup", () => {
+canvasElement.addEventListener("mouseup", () => {
     mouseDown = false;
+    canvasElement.style.cursor = "grab"
+    moveis = moveis.map((elem, index) => {
+        return true
+    })
 });
-
-document.addEventListener("mousemove", (e) => {
+let nearestControlPointIndex;
+canvasElement.addEventListener("mousemove", (e) => {
+    nearestControlPointIndex = getNearControlPoint(currentControlPoints, [e.clientX / scaleX, e.clientY / scaleY])
     if (mouseDown) {
-        currentControlPoints[0][0] = e.clientX / scaleX;
-        currentControlPoints[0][1] = e.clientY / scaleY;
+        currentControlPoints[nearestControlPointIndex][0] = e.clientX / scaleX;
+        currentControlPoints[nearestControlPointIndex][1] = e.clientY / scaleY;
+        moveis = moveis.map((elem, index) => {
+            return index !== nearestControlPointIndex
+        })
+        canvasElement.style.cursor = "grabbing"
+    } else {
+        canvasElement.style.cursor = "grab"
     }
 })
+// document.body.cursor = "none"
 
 function updateFrame(time) {
     requestAnimationFrame(updateFrame);
