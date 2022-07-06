@@ -1,6 +1,10 @@
 body {
     font-family: sans-serif;
 }
+canvas {
+    border-radius: 5pt;
+    border: 1.5pt solid #555;
+}
 #menu {
     /*padding: 10px;*/
     width: 175pt;
@@ -17,10 +21,10 @@ body {
     background: #eee;
     border-radius: 5pt;
     border: 1.5pt solid #555;
+    margin: 0 0 10pt 0;
 }
 #menu > div {
     padding: 8pt 8pt 4pt 8pt;
-    margin-bottom: 15pt;
 }
 #menu input {
     margin-top: 5pt;
@@ -30,15 +34,11 @@ body {
 #menu > button {
     background: #ccc;
     width: 100%;
-    margin: 0;
+    margin-bottom: 5pt;
     padding: 4pt 8pt;
     font-size: 11pt;
 }
 
 #menu > button:active {
     background: #aaa;
-}
-canvas {
-    border-radius: 5pt;
-    border: 1.5pt solid #555;
 }
