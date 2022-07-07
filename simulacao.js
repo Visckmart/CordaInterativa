@@ -1,5 +1,8 @@
 import { addV, subV, setMag, dist } from "./Utilities.js";
 
+const iterAverage = 100;
+const lastIter = [];
+
 function forca(tempo,vento) {
     return [0+vento[0], massa * 9.8+vento[1]]
 }
@@ -27,7 +30,7 @@ export function calculaVento(ventForca, ventAngulo){
     return [ventForca*Math.cos(angle),ventForca*Math.sin(angle)]
 }
 
-export function updateCorda(currentControlPoints, previousControlPoints, freePoints, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime, width, height) {
+export function updateCorda(ctx, currentControlPoints, previousControlPoints, freePoints, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime, width, height,screenHeight) {
     let newControlPoints = currentControlPoints.map((ponto, index) => {
         if (freePoints[index]) {
             return verlet(ponto, previousControlPoints[index], (deltaTime) / 1000, vento);
@@ -36,8 +39,24 @@ export function updateCorda(currentControlPoints, previousControlPoints, freePoi
         }
     });
     // console.log(newControlPoints);
-    ajustaBarra(newControlPoints, freePoints, barLen, tol, tolRel, circulosColisao, ground, width, height); // Ajusta as barras
+    let n  = ajustaBarra(newControlPoints, freePoints, barLen, tol, tolRel, circulosColisao, ground, width, height); // Ajusta as barras
 
+
+    const iter = n;
+    if (lastIter.length > iterAverage) {
+        lastIter.shift();
+    }
+    lastIter.push(iter-1);
+    const averageIter = lastIter.reduce((a, b) => a + b, 0) / lastIter.length;
+    ctx.fillStyle = "black";
+    ctx.font = "12px monospace";
+    ctx.fillText(
+        averageIter.toLocaleString(undefined, {
+            maximumFractionDigits: 0,
+        }) + " Iteracoes de relaxamento",
+        5,
+        screenHeight - 5,
+    );
 
     return newControlPoints;
 }

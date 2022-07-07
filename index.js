@@ -25,6 +25,9 @@ const ventoForcaValorElemento = document.getElementById("vento_forca_valor")
 const groundElemento = document.getElementById("ground")
 const groundValorElemento = document.getElementById("ground_valor")
 
+const toleranciaElemento = document.getElementById("tolerancia")
+const toleranciaValorElemento = document.getElementById("tolerancia_valor")
+
 const resetButton = document.getElementById("reset_button")
 const debugButton = document.getElementById("debug_button")
 
@@ -66,6 +69,9 @@ function resetParameters() {
     ventForca = 0
 
     currentControlPoints = [[5, 1], [5.5, 1], [7, 1], [8, 1]];
+    cordaAnterior = [[5, 1], [5.5, 1], [7, 1], [8, 1]];
+    circulosColisao = [[[5,4],1],[[8,8],0.5]];
+    moveis = [false, true, true, true];
     refreshControlTexts()
 }
 
@@ -181,12 +187,12 @@ function updateFrame(time) {
         return;
     }
     const deltaTime = time - lastTime;
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height+5);
 
     const tempCorda = [...currentControlPoints];
     // console.log(cordaAnterior, tolRel)
     let vento = calculaVento(ventForca, ventAngulo);
-    currentControlPoints = updateCorda(currentControlPoints, cordaAnterior, moveis, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime, largura, altura);
+    currentControlPoints = updateCorda(ctx, currentControlPoints, cordaAnterior, moveis, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime, largura, altura, height);
     cordaAnterior = tempCorda;
     lastTime = time;
 
@@ -211,6 +217,7 @@ function refreshControlTexts() {
     nPontosValorElemento.textContent = nPontos.toString()
     ventoAnguloValorElemento.textContent = ventAngulo.toString()
     ventoForcaValorElemento.textContent = ventForca.toString()
+    toleranciaValorElemento.textContent = tolRel.toString()
     if(ground>10){
         groundValorElemento.textContent = "Sem chão"
     }else{
@@ -235,6 +242,11 @@ ventoForcaElemento.addEventListener("input", () => {
 
 tamanhoElemento.addEventListener("input", () => {
     barLen = Number.parseFloat(tamanhoElemento.value)
+    refreshControlTexts()
+})
+
+toleranciaElemento.addEventListener("input", () => {
+    tolRel = Number.parseFloat(toleranciaElemento.value)
     refreshControlTexts()
 })
 
