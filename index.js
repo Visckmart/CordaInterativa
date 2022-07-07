@@ -185,7 +185,7 @@ function updateFrame(time) {
     const tempCorda = [...currentControlPoints];
     // console.log(cordaAnterior, tolRel)
     let vento = calculaVento(ventForca, ventAngulo);
-    currentControlPoints = updateCorda(currentControlPoints, cordaAnterior, moveis, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime);
+    currentControlPoints = updateCorda(currentControlPoints, cordaAnterior, moveis, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime, largura, altura);
     cordaAnterior = tempCorda;
     lastTime = time;
 
@@ -237,14 +237,19 @@ tamanhoElemento.addEventListener("input", () => {
     refreshControlTexts()
 })
 
+let lastDir = null
 function updateTamanhoCorda() {
     const delta = Math.min(nPontos - currentControlPoints.length, 10);
     let lastPoint =  currentControlPoints[currentControlPoints.length-1]
-    //console.log(lastPoint)
+
     let secondToLastPoint = currentControlPoints[currentControlPoints.length - 2]
     let dir = subV(lastPoint, secondToLastPoint);
-    if (dir === [0, 0]) {
-        return;
+
+    // Caso o vetor distância dê 0 uma direção será sorteada
+    if (Math.abs(dir[0]) < 1e5 || Math.abs(dir[1]) < 1e5) {
+        const x = Math.random() * width
+        const y = Math.random() * height
+        dir = subV([x,y], lastPoint)
     }
     dir = setMag(dir, barLen);
     let newPos = addV(lastPoint, dir);

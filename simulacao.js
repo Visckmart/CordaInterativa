@@ -27,7 +27,7 @@ export function calculaVento(ventForca, ventAngulo){
     return [ventForca*Math.cos(angle),ventForca*Math.sin(angle)]
 }
 
-export function updateCorda(currentControlPoints, previousControlPoints, freePoints, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime) {
+export function updateCorda(currentControlPoints, previousControlPoints, freePoints, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime, width, height) {
     let newControlPoints = currentControlPoints.map((ponto, index) => {
         if (freePoints[index]) {
             return verlet(ponto, previousControlPoints[index], (deltaTime) / 1000, vento);
@@ -36,23 +36,50 @@ export function updateCorda(currentControlPoints, previousControlPoints, freePoi
         }
     });
     // console.log(newControlPoints);
-    ajustaBarra(newControlPoints, freePoints, barLen, tol, tolRel, circulosColisao, ground); // Ajusta as barras
+    ajustaBarra(newControlPoints, freePoints, barLen, tol, tolRel, circulosColisao, ground, width, height); // Ajusta as barras
+
 
     return newControlPoints;
 }
 
-function ajustaBarra(listaPontos, listaMoveis, barLen, tol, tolRel, circulosColisao, ground) {
-    let n = 0;
-    while (relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao, ground)) {
-        n += 1;
-        if (n > tolRel) {
-            return n;
+function restringeCorda(listaPontos, ground, width, height) {
+    for(let i=0;i<listaPontos.length;i++) {
+        /* Restrição de parede */
+        if(listaPontos[i][0] < 0) {
+            listaPontos[i][0] = 0
+        }
+        if(listaPontos[i][0] > width) {
+            listaPontos[i][0] = width
+        }
+
+        /* Restrição de chão */
+        if(ground<=10){
+            if(listaPontos[i][1] > ground){
+                listaPontos[i][1] = ground
+            }
+        }
+
+        /* Restrição de teto */
+        if(listaPontos[i][1] < 0) {
+            listaPontos[i][1] = 0 // Um pouco acima do teto
         }
     }
+}
+
+function ajustaBarra(listaPontos, listaMoveis, barLen, tol, tolRel, circulosColisao, ground, width, height) {
+    let n = 0;
+    while (relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao)) {
+        n += 1;
+        if (n > tolRel) {
+            break;
+        }
+    }
+    restringeCorda(listaPontos, ground, width, height)
+    
     return n;
 }
 
-function colisao(posicao, circulosColisao, ground) {
+function colisao(posicao, circulosColisao) {
     for(let i = 0; i < circulosColisao.length; i++){
         let dir = subV(circulosColisao[i][0],posicao);
         let distancia = dist(posicao, circulosColisao[i][0]); // Calcule a distancia entre eles;
@@ -62,16 +89,11 @@ function colisao(posicao, circulosColisao, ground) {
             posicao = subV(posicao,dir)
         }
     }
-    if(ground<=10){
-        if(posicao[1]>ground){
-            posicao[1] = ground
-        }
-    }
     return posicao
 
 }
 
-function relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao, ground) { // Faz o ajuste das barras
+function relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao) { // Faz o ajuste das barras
     // listaPontos é a lista de todos os pontos da barra
     // listaBarras é a lista correspondente que indica quais dos pontos são móveis
     let flag = false;
@@ -95,8 +117,8 @@ function relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao, gro
         }
         let newPos = addV(listaPontos[i], dir); // Move o ponto atual em direção ao próximo ponto
         let newPos2 = subV(listaPontos[i + 1], dir); // Move o próximo ponto em direção ao ponto atual
-        newPos = colisao(newPos, circulosColisao, ground)
-        newPos2 = colisao(newPos2, circulosColisao, ground)
+        newPos = colisao(newPos, circulosColisao)
+        newPos2 = colisao(newPos2, circulosColisao)
         if (listaMoveis[i]) { // (Apenas se estes forem móveis)
             listaPontos[i] = newPos;
         }
