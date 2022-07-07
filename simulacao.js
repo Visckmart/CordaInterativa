@@ -23,7 +23,7 @@ export function verlet([x, y], [xAnterior, yAnterior], tempo, vento) {
 }
 
 export function calculaVento(ventForca, ventAngulo){
-    let angle = ventAngulo*(Math.PI/180)
+    let angle = ventAngulo*(Math.PI/180) // Converte o angulo para radianos
     return [ventForca*Math.cos(angle),ventForca*Math.sin(angle)]
 }
 
@@ -101,11 +101,10 @@ function relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao) { /
         // Para cada ponto (e o ponto seguinte na lista)...
         let dir = subV(listaPontos[i + 1], listaPontos[i]); // Calcule a direção (o vetor entre os dois pontos);
         let distancia = dist(listaPontos[i], listaPontos[i + 1]); // Calcule a distancia entre eles;
-        let magnitude = Math.abs(distancia - barLen);
-        if (listaMoveis[i] && listaMoveis[i + 1]) {
-            magnitude = magnitude / 2;
+        let magnitude = Math.abs(distancia - barLen) / 2; // Calcule e determine a magnitude do vetor baseado na diferenca entre
+        if (listaMoveis[i] && listaMoveis[i + 1]) {       // a distancia entre os dois pontos e o comprimento desejado da barra
+            magnitude = magnitude / 2;    // Se ambos os pontos forem moveis, cada um só precisa andar metade do caminho
         }
-        magnitude = Math.abs(distancia - barLen) / 2; // Calcule e determine a magnitude baseado na distancia entre os dois pontos
         dir = setMag(dir, magnitude);
         if (Math.abs(barLen - distancia) < tol) { // Se estivermos dentro da tolerância desejada, zere o vetor;
             dir = [0, 0];

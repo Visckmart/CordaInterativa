@@ -70,10 +70,8 @@ function resetParameters() {
 }
 
 resetButton.onclick = resetParameters;
-// let ground = 9
 ajustaBarra(currentControlPoints, moveis, barLen, tolRel, circulosColisao, ground);
-// moveis = [true, true]
-// currentControlPoints = [[110, 110],[250,320]]
+
 
 let mouseDown = false; // Variável para determinar se o mouse está sendo segurado ou não
 
