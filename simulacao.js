@@ -68,14 +68,17 @@ function restringeCorda(listaPontos, ground, width, height) {
 
 function ajustaBarra(listaPontos, listaMoveis, barLen, tol, tolRel, circulosColisao, ground, width, height) {
     let n = 0;
-    while (relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao)) {
-        n += 1;
-        if (n > tolRel) {
-            break;
+
+    for(let i=1;i<=5;i++) {
+        while (relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao, i)) {
+            n += 1;
+            if (n > tolRel) {
+                break;
+            }
         }
     }
     restringeCorda(listaPontos, ground, width, height)
-    
+
     return n;
 }
 
@@ -93,21 +96,29 @@ function colisao(posicao, circulosColisao) {
 
 }
 
-function relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao) { // Faz o ajuste das barras
+function relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao, vizinhos) { // Faz o ajuste das barras
     // listaPontos é a lista de todos os pontos da barra
     // listaBarras é a lista correspondente que indica quais dos pontos são móveis
     let flag = false;
+    barLen = barLen / (vizinhos)
     for (let i = 0; i < listaPontos.length - 1; i++) {
+        if(i + vizinhos >= listaPontos.length) {
+            break;
+        } 
         // Para cada ponto (e o ponto seguinte na lista)...
-        let dir = subV(listaPontos[i + 1], listaPontos[i]); // Calcule a direção (o vetor entre os dois pontos);
-        let distancia = dist(listaPontos[i], listaPontos[i + 1]); // Calcule a distancia entre eles;
+        let dir = subV(listaPontos[i + vizinhos], listaPontos[i]); // Calcule a direção (o vetor entre os dois pontos);
+        let distancia = dist(listaPontos[i], listaPontos[i + vizinhos]); // Calcule a distancia entre eles;
         let magnitude = Math.abs(distancia - barLen);
-        if (listaMoveis[i] && listaMoveis[i + 1]) {
+        if (listaMoveis[i] && listaMoveis[i + vizinhos]) {
             magnitude = magnitude / 2;
         }
         magnitude = Math.abs(distancia - barLen) / 2; // Calcule e determine a magnitude baseado na distancia entre os dois pontos
         dir = setMag(dir, magnitude);
-        if (Math.abs(barLen - distancia) < tol) { // Se estivermos dentro da tolerância desejada, zere o vetor;
+
+        // O primeiro vizinho deve ser restringido de ficar longe e perto
+        // Já os outros só devem ser restringidos de ficar perto
+        let erro = vizinhos > 1 ? barLen - distancia : Math.abs(barLen - distancia)
+        if (erro < tol) { // Se estivermos dentro da tolerância desejada, zere o vetor;
             dir = [0, 0];
         } else {
             flag = true;
@@ -116,14 +127,14 @@ function relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao) { /
             }
         }
         let newPos = addV(listaPontos[i], dir); // Move o ponto atual em direção ao próximo ponto
-        let newPos2 = subV(listaPontos[i + 1], dir); // Move o próximo ponto em direção ao ponto atual
+        let newPos2 = subV(listaPontos[i + vizinhos], dir); // Move o próximo ponto em direção ao ponto atual
         newPos = colisao(newPos, circulosColisao)
         newPos2 = colisao(newPos2, circulosColisao)
         if (listaMoveis[i]) { // (Apenas se estes forem móveis)
             listaPontos[i] = newPos;
         }
-        if (listaMoveis[i + 1]) {
-            listaPontos[i + 1] = newPos2;
+        if (listaMoveis[i + vizinhos]) {
+            listaPontos[i + vizinhos] = newPos2;
         }
     }
     return flag;
