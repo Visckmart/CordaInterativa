@@ -30,7 +30,7 @@ function drawCorda(ctx, controlPoints, deltaT, scaleX, scaleY) {
     ctx.stroke();
 }
 
-export function drawBolinhasCorda(ctx, controlPoints, nearestControlPointIndex, scaleX, scaleY) {
+export function drawBolinhasCorda(ctx, controlPoints, nearestControlPointIndex, scaleX, scaleY, debugMode) {
 
     let i = 0; // Indíce do ponto no próximo for
     for (let controlPoint of controlPoints) {
@@ -38,17 +38,18 @@ export function drawBolinhasCorda(ctx, controlPoints, nearestControlPointIndex, 
         ctx.arc(
             controlPoint[0] * scaleX,
             controlPoint[1] * scaleY,
-            2,
+            debugMode ? 3 : 2,
             0,
             2 * Math.PI,
         );
         // console.log(i, nearestControlPoint)
         if (i !== nearestControlPointIndex) { // Se o ponto for móvel, pinte-o de azul
-            ctx.fillStyle = "clear";
+            ctx.fillStyle = debugMode ? "blue" : "clear";
         } else {
             ctx.fillStyle = "red";
-            ctx.fill();
+            if (!debugMode) ctx.fill();
         }
+        if (debugMode) ctx.fill();
         i += 1;
     }
 }

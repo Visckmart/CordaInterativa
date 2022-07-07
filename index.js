@@ -196,9 +196,9 @@ function updateFrame(time) {
 
     drawCorda(ctx, currentControlPoints, deltaTime, scaleX, scaleY);
 
-    // if (debugMode) {
+    if (debugMode) {
         drawBolinhasCorda(ctx, currentControlPoints, nearestControlPointIndex, scaleX, scaleY);
-    // }
+    }
 
     if (ground < 10) {
         drawChao(ctx, ground, width, scaleX, scaleY);
