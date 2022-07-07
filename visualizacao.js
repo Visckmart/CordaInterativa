@@ -38,17 +38,17 @@ export function drawBolinhasCorda(ctx, controlPoints, nearestControlPointIndex, 
         ctx.arc(
             controlPoint[0] * scaleX,
             controlPoint[1] * scaleY,
-            3,
+            2,
             0,
             2 * Math.PI,
         );
         // console.log(i, nearestControlPoint)
         if (i !== nearestControlPointIndex) { // Se o ponto for móvel, pinte-o de azul
-            ctx.fillStyle = "blue";
+            ctx.fillStyle = "clear";
         } else {
             ctx.fillStyle = "red";
+            ctx.fill();
         }
-        ctx.fill();
         i += 1;
     }
 }

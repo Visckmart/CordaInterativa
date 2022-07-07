@@ -51,7 +51,7 @@ const scaleY = height / altura;
 
 let moveis = [false, true, true, true]; // moveis[i] corresponde ao ponto de indice i e determina se ele é móvel ou imóvel
 let currentControlPoints = [[5, 1], [5.5, 1], [7, 1], [8, 1]];
-let circulosColisao = [[[5,4],1],[[8,8],0.5]]
+let circulosColisao = [[[5,4],1],[[8,8],0.5]];
 
 function resetParameters() {
     ground = 10;
@@ -130,7 +130,7 @@ canvasElement.addEventListener("mousedown", () => {
         canvasElement.style.cursor = "grabbing"
     }
 });
-canvasElement.addEventListener("mouseup", () => {
+document.addEventListener("mouseup", () => {
     mouseDown = false;
     // canvasElement.style.cursor = "grab"
     moveis = moveis.map((elem, index) => {
@@ -168,7 +168,10 @@ canvasElement.addEventListener("mousemove", (e) => {
         }
         canvasElement.style.cursor = "grabbing"
     } else {
-        canvasElement.style.cursor = (nearestControlPointIndex != null || nearestObstacleIndex != null) ? "grab" : "default";
+        canvasElement.style.cursor = (nearestControlPointIndex != null || newNearestObstacleIndex != null) ? "grab" : "default";
+    }
+    if (newNearestObstacleIndex != null) {
+        nearestControlPointIndex = null;
     }
 })
 
@@ -193,9 +196,9 @@ function updateFrame(time) {
 
     drawCorda(ctx, currentControlPoints, deltaTime, scaleX, scaleY);
 
-    if (debugMode) {
+    // if (debugMode) {
         drawBolinhasCorda(ctx, currentControlPoints, nearestControlPointIndex, scaleX, scaleY);
-    }
+    // }
 
     if (ground < 10) {
         drawChao(ctx, ground, width, scaleX, scaleY);
