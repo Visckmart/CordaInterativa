@@ -46,7 +46,7 @@ export function updateCorda(ctx, currentControlPoints, previousControlPoints, fr
     if (lastIter.length > iterAverage) {
         lastIter.shift();
     }
-    lastIter.push(iter-1);
+    lastIter.push(iter);
     const averageIter = lastIter.reduce((a, b) => a + b, 0) / lastIter.length;
     ctx.fillStyle = "black";
     ctx.font = "12px monospace";
@@ -89,7 +89,7 @@ function ajustaBarra(listaPontos, listaMoveis, barLen, tol, tolRel, circulosColi
     let n = 0;
     while (relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao)) {
         n += 1;
-        if (n > tolRel) {
+        if (n >= tolRel) {
             break;
         }
     }
