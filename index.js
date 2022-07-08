@@ -1,5 +1,5 @@
-import {ajustaBarra, calculaVento, estimativaInicial, updateCorda, verlet} from "./simulacao.js"
-import {drawBolinhasCorda, drawChao, drawCorda, drawObstaculos} from "./visualizacao.js";
+import { ajustaBarra, calculaVento, estimativaInicial, updateCorda } from "./simulacao.js"
+import { drawBolinhasCorda, drawChao, drawCorda, drawObstaculos } from "./visualizacao.js";
 import { addV, subV, setMag, dist } from "./Utilities.js";
 
 let canvasElement = document.getElementById("canvas");
@@ -88,7 +88,6 @@ currentControlPoints = currentControlPoints.map((ponto) =>
 );
 let lastTime = null;
 
-
 function getNearControlPoint(controlPoints, point) {
     let nearestControlPoint;
     let nearestDist;
@@ -108,6 +107,7 @@ function getNearControlPoint(controlPoints, point) {
         return null;
     }
 }
+
 function getNearestObstacle(point, colisionObjects) {
     let nearestObject;
     let nearestDist;
@@ -128,41 +128,39 @@ function getNearestObstacle(point, colisionObjects) {
         return null;
     }
 }
+
 canvasElement.addEventListener("mousedown", () => {
     mouseDown = true;
     if (nearestControlPointIndex) {
         canvasElement.style.cursor = "grabbing"
     }
 });
+
 document.addEventListener("mouseup", () => {
     mouseDown = false;
     // canvasElement.style.cursor = "grab"
-    moveis = moveis.map((elem, index) => {
-        return true
-    })
+    moveis = moveis.map(_ => { return true; })
     movendoCorda = false;
     nearestObstacleIndex = null;
 })
 
-let nearestControlPointIndex;
-let nearestObstacleIndex;
+let nearestControlPointIndex = null;
+let nearestObstacleIndex = null;
 let movendoCorda = false;
 canvasElement.addEventListener("mousemove", (e) => {
     let point = [(e.clientX - canvasElement.getBoundingClientRect().left) / scaleX,
         (e.clientY - canvasElement.getBoundingClientRect().top) / scaleY];
     let newNearestObstacleIndex = getNearestObstacle(point, circulosColisao);
     if (movendoCorda === false) { nearestControlPointIndex = getNearControlPoint(currentControlPoints, point) }
-    // console.log(movendoCorda, nearestObstacle)
 
-    if (mouseDown && newNearestObstacleIndex != null) {
+    if (mouseDown && newNearestObstacleIndex !== null) {
         nearestObstacleIndex = newNearestObstacleIndex;
     }
-    if (mouseDown && (nearestControlPointIndex != null || nearestObstacleIndex != null)) {
-        // console.log(movendoCorda)
-        if (nearestObstacleIndex != null && movendoCorda === false) {
+    if (mouseDown && (nearestControlPointIndex !== null || nearestObstacleIndex !== null)) {
+        if (nearestObstacleIndex !== null && movendoCorda === false) {
             circulosColisao[nearestObstacleIndex][0][0] = point[0];
             circulosColisao[nearestObstacleIndex][0][1] = point[1];
-        } else {
+        } else if (nearestControlPointIndex !== null) {
             movendoCorda = true;
             currentControlPoints[nearestControlPointIndex][0] = point[0];
             currentControlPoints[nearestControlPointIndex][1] = point[1];
@@ -170,12 +168,9 @@ canvasElement.addEventListener("mousemove", (e) => {
                 return index !== nearestControlPointIndex
             })
         }
-        canvasElement.style.cursor = "grabbing"
+        canvasElement.style.cursor = "grabbing";
     } else {
-        canvasElement.style.cursor = (nearestControlPointIndex != null || newNearestObstacleIndex != null) ? "grab" : "default";
-    }
-    if (newNearestObstacleIndex != null) {
-        nearestControlPointIndex = null;
+        canvasElement.style.cursor = (nearestControlPointIndex !== null || newNearestObstacleIndex !== null) ? "grab" : "default";
     }
 })
 
@@ -194,7 +189,6 @@ function updateFrame(time) {
     ctx.clearRect(0, 0, width, height+5);
 
     const tempCorda = [...currentControlPoints];
-    // console.log(cordaAnterior, tolRel)
     let vento = calculaVento(ventForca, ventAngulo);
     currentControlPoints = updateCorda(ctx, currentControlPoints, cordaAnterior, moveis, vento, barLen, tol, tolRel, circulosColisao, ground, deltaTime, largura, altura, height);
     cordaAnterior = tempCorda;
@@ -254,7 +248,6 @@ toleranciaElemento.addEventListener("input", () => {
     refreshControlTexts()
 })
 
-let lastDir = null
 function updateTamanhoCorda() {
     const delta = Math.min(nPontos - currentControlPoints.length, 10);
     let lastPoint =  currentControlPoints[currentControlPoints.length-1]
