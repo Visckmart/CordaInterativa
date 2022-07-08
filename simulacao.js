@@ -61,7 +61,7 @@ export function updateCorda(ctx, currentControlPoints, previousControlPoints, fr
     ctx.fillText(
         averageIter.toLocaleString(undefined, {
             maximumFractionDigits: 0,
-        }) + " Iterações de relaxamento",
+        }) + " iterações de relaxamento",
         5,
         screenHeight - 5,
     );
