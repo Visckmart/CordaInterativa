@@ -208,6 +208,14 @@ function updateFrame(time) {
         drawChao(ctx, ground, width, scaleX, scaleY);
     }
     updateTamanhoCorda();
+
+    for(let i=0;i<currentControlPoints.length;i++) {
+        /* Reiniciando a corda caso hajam valores NaN */
+        if(Number.isNaN(currentControlPoints[i][0]) || Number.isNaN(currentControlPoints[i][1])) {
+            console.log("RESET")
+            resetParameters()
+        }
+    }
 }
 
 requestAnimationFrame(updateFrame);
