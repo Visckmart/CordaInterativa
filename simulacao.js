@@ -8,7 +8,7 @@ const massOutput = document.getElementById("massa_valor")
 massInput.addEventListener('input', () => {
     massa = Number.parseFloat(massInput.value)
     massOutput.value = massa
-    console.log(massa)
+
 })
 
 let massa = 0.1
