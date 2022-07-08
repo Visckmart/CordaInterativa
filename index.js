@@ -39,7 +39,7 @@ let barLen = 1; // Comprimento das barras entre os nós
 let tol = 1e-5; // Tolerancia aceita para o comprimento
 let tolRel = 120; // Tolerancia relaxamento
 
-let nPontos = 4;
+let nPontos = 5;
 
 let ventAngulo = 0
 let ventForca = 0
@@ -187,6 +187,10 @@ function updateFrame(time) {
         return;
     }
     const deltaTime = time - lastTime;
+    if (deltaTime > 150) {
+        lastTime = time;
+        return;
+    }
     ctx.clearRect(0, 0, width, height+5);
 
     const tempCorda = [...currentControlPoints];
