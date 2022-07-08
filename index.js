@@ -101,7 +101,6 @@ function getNearControlPoint(controlPoints, point) {
         }
     }
     if (nearestDist < 2.5) {
-        // console.log(nearestDist, nearestIndex)
         return parseInt(nearestIndex);
     } else {
         return null;
@@ -198,19 +197,16 @@ function updateFrame(time) {
 
     drawCorda(ctx, currentControlPoints, deltaTime, scaleX, scaleY);
 
-    if (debugMode) {
-        drawBolinhasCorda(ctx, currentControlPoints, nearestControlPointIndex, scaleX, scaleY);
-    }
+    drawBolinhasCorda(ctx, currentControlPoints, nearestControlPointIndex, scaleX, scaleY, debugMode);
 
     if (ground < 10) {
         drawChao(ctx, ground, width, scaleX, scaleY);
     }
     updateTamanhoCorda();
 
-    for(let i=0;i<currentControlPoints.length;i++) {
+    for(let i = 0; i < currentControlPoints.length; i++) {
         /* Reiniciando a corda caso hajam valores NaN */
         if(Number.isNaN(currentControlPoints[i][0]) || Number.isNaN(currentControlPoints[i][1])) {
-            console.log("RESET")
             resetParameters()
         }
     }
