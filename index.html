@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <script src="index.js" type="module"></script>
     <link rel="stylesheet" href="style.css">
     <title>Corda</title>
 </head>
-
 <body>
     <div style="display: flex; max-height: 800px" >
         <canvas id="canvas" width="1100" height="800"></canvas>
@@ -53,7 +51,7 @@
             <div style="display: flex;flex-direction:column" >
                 <div>
                     <label for="massa">Massa: </label><output id="massa_valor">0.1</output>
-                    <input type="range" style="flex: 0 1 auto" id="massa" min="1" max="50" value="0.1" step = "0.1" />
+                    <input type="range" style="flex: 0 1 auto" id="massa" min="0.1" max="10" value="0.1" step = "0.1" />
                 </div>
             </div>
             <button id="reset_button">Restaurar configurações</button>
