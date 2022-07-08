@@ -36,7 +36,7 @@ let debugMode = false;
 debugButton.onclick = () => { debugMode = !debugMode };
 
 let barLen = 1; // Comprimento das barras entre os nós
-let tol = 1e-5; // Tolerancia aceita para o comprimento
+let tol = 1e-8; // Tolerancia aceita para o comprimento
 let tolRel = 120; // Tolerancia relaxamento
 
 let nPontos = 5;

@@ -3,6 +3,15 @@ import { addV, subV, setMag, dist } from "./Utilities.js";
 const iterAverage = 100;
 const lastIter = [];
 
+const massInput = document.getElementById("massa")
+const massOutput = document.getElementById("massa_valor")
+massInput.addEventListener('input', () => {
+    massa = Number.parseFloat(massInput.value)
+    massOutput.value = massa
+
+})
+
+let massa = 0.1
 function forca(tempo,vento) {
     return [0+vento[0], massa * 9.8+vento[1]]
 }
@@ -14,7 +23,6 @@ export function estimativaInicial([x0, y0], [vx0, vy0]) {
     return [x0 + passoIntegracao * vx0, y0 + passoIntegracao * vy0]
 }
 
-const massa = 0.1
 const fatorRelaxamento = 0.02
 export function verlet([x, y], [xAnterior, yAnterior], tempo, vento) {
     const [fx, fy] = forca(tempo,vento)
@@ -46,7 +54,7 @@ export function updateCorda(ctx, currentControlPoints, previousControlPoints, fr
     if (lastIter.length > iterAverage) {
         lastIter.shift();
     }
-    lastIter.push(iter-1);
+    lastIter.push(iter);
     const averageIter = lastIter.reduce((a, b) => a + b, 0) / lastIter.length;
     ctx.fillStyle = "black";
     ctx.font = "12px monospace";
@@ -89,7 +97,7 @@ function ajustaBarra(listaPontos, listaMoveis, barLen, tol, tolRel, circulosColi
     let n = 0;
     while (relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao)) {
         n += 1;
-        if (n > tolRel) {
+        if (n >= tolRel) {
             break;
         }
     }
@@ -125,8 +133,8 @@ function relaxaBarra(listaPontos, listaMoveis, barLen, tol, circulosColisao) { /
             magnitude = magnitude / 2;    // Se ambos os pontos forem moveis, cada um só precisa andar metade do caminho
         }
         dir = setMag(dir, magnitude);
-        if (Math.abs(barLen - distancia) < tol) { // Se estivermos dentro da tolerância desejada, zere o vetor;
-            dir = [0, 0];
+        if (Math.abs(barLen - distancia) < tol) { // Se estivermos dentro da tolerância desejada, não faça;
+            continue
         } else {
             flag = true;
             if (distancia < barLen) { // Se a barra estiver menor que o desejado, inverta a direção do movimento.
